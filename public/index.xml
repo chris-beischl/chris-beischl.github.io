@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on Chris&#39;s Computer Science and Maths Blog</title>
+    <link>https://chris-beischl.github.io/</link>
+    <description>Recent content in Home on Chris&#39;s Computer Science and Maths Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate></lastBuildDate>
+    <atom:link href="https://chris-beischl.github.io/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
