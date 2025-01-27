@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>No-Graph-Analysis on Chris&#39;s Computer Science and Maths Blog</title>
-    <link>http://localhost:1313/tags/no-graph-analysis/</link>
+    <link>https://chris-beischl.github.io/tags/no-graph-analysis/</link>
     <description>Recent content in No-Graph-Analysis on Chris&#39;s Computer Science and Maths Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 27 Jan 2025 18:34:41 +0100</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/no-graph-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://chris-beischl.github.io/tags/no-graph-analysis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>My First Post</title>
-      <link>http://localhost:1313/posts/my-first-post/</link>
+      <link>https://chris-beischl.github.io/posts/my-first-post/</link>
       <pubDate>Mon, 27 Jan 2025 18:34:41 +0100</pubDate>
-      <guid>http://localhost:1313/posts/my-first-post/</guid>
+      <guid>https://chris-beischl.github.io/posts/my-first-post/</guid>
       <description>This is just a test post</description>
     </item>
   </channel>
