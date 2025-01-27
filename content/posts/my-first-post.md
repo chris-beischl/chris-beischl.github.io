@@ -48,6 +48,6 @@ assert foo(bar(x)) == bar(foo(x))
 
 ### Maths
 
-I can write in-line latex equations and $\pi \approx 3.14159$ and equations: 
+I can write in-line latex equations like $\pi \approx 3.14159$ and equations: 
 $$P \left( A=2 \; \middle| \; \dfrac{A^2}{B}>4 \right)$$
 However it appears, not all commands are supported.. 
