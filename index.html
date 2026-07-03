@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chris Beischl</title>
+<meta name="description" content="Chris Beischl — I build software. Currently: Lectern, a Discord bot that runs book clubs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; }
+  ::selection { background: #8b2f33; color: #f7f3ea; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px rgba(33,29,24,0.5); border-color: rgba(33,29,24,0.2); }
+  a.plain { text-decoration: none; color: inherit; }
+  @media (max-width: 720px) { .projects { grid-template-columns: 1fr !important; } }
+</style>
+</head>
+<body style="background:#f4efe4; color:#211d18; font-family:'IBM Plex Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; line-height:1.5;">
+
+  <main style="max-width:820px; margin:0 auto; padding:120px 28px 96px;">
+
+    <!-- ===== INTRO ===== -->
+    <section style="animation:rise .7s ease both; margin-bottom:76px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:22px;">Chris Beischl</div>
+      <h1 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(36px,6vw,58px); line-height:1.04; letter-spacing:-0.02em; margin:0 0 22px;">
+        I build software that <span style="font-style:italic; color:#8b2f33;">quietly does the work.</span>
+      </h1>
+      <p style="font-size:18px; line-height:1.6; color:#5b5347; max-width:34em; margin:0;">
+        Data engineering &amp; machine learning by training, product-minded by habit. Right now I'm building <strong style="color:#211d18;">Lectern</strong> — a Discord bot that runs a book club's whole cycle so nobody has to keep the meetings happening by hand.
+      </p>
+    </section>
+
+    <!-- ===== PROJECTS ===== -->
+    <section style="animation:rise .8s ease .1s both;">
+      <h2 style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase; color:#8a8275; font-weight:500; margin:0 0 20px;">Projects</h2>
+
+      <div class="projects" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+
+        <!-- Lectern -->
+        <a class="plain card" href="./lectern/" style="display:block; background:#fffdf8; border:1px solid rgba(33,29,24,0.1); border-radius:16px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <span style="width:38px; height:38px; border-radius:9px; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'Newsreader',serif; font-weight:600; font-size:22px; padding-bottom:2px;">L</span>
+            <div>
+              <div style="font-family:'Newsreader',serif; font-size:21px; font-weight:600; line-height:1;">Lectern</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:#8a8275; margin-top:4px;">Discord bot · book clubs</div>
+            </div>
+          </div>
+          <p style="margin:0 0 16px; font-size:14.5px; color:#5b5347; line-height:1.55;">Proposes books, runs the vote, gathers readers, finds a date and sends reminders — one bot, many clubs, privacy-first.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500; color:#8b2f33;">Learn more →</span>
+        </a>
+
+        <!-- Placeholder for the next project -->
+        <div class="card" style="background:transparent; border:1px dashed rgba(33,29,24,0.22); border-radius:16px; padding:26px; display:flex; align-items:center; justify-content:center; text-align:center; color:#a39a8a;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px;">more soon</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="border-top:1px solid rgba(33,29,24,0.1);">
+    <div style="max-width:820px; margin:0 auto; padding:28px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8a8275;">© <span id="year"></span> Chris Beischl</span>
+      <div style="display:flex; gap:22px; font-size:13.5px;">
+        <a href="https://github.com/chris-beischl" style="color:#5b5347; text-decoration:none;">GitHub</a>
+        <a href="mailto:chreedo@gmail.com" style="color:#5b5347; text-decoration:none;">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

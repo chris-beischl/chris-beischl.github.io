@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lectern — a Discord bot that runs your book club</title>
+<meta name="description" content="Lectern runs a book club's whole cycle in Discord — proposing, voting, gathering readers, scheduling and reminders — so no one has to keep meetings happening by hand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; }
+  ::selection { background: #8b2f33; color: #f7f3ea; }
+  @keyframes lec-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .cmd-cat:hover { border-color: rgba(33,29,24,0.4) !important; }
+  #cmd-search:focus { border-color: #8b2f33 !important; }
+  @media (max-width: 860px) {
+    .lec-hero, .lec-privacy { grid-template-columns: 1fr !important; }
+    .lec-cycle, .lec-3, .lec-steps { grid-template-columns: 1fr !important; }
+    .lec-2 { grid-template-columns: 1fr !important; }
+    .lec-nav-links a:not(.lec-cta) { display: none !important; }
+    .lec-cmd-row { grid-template-columns: 1fr !important; gap: 8px !important; }
+  }
+</style>
+</head>
+<body style="background:#f4efe4; color:#211d18; font-family:'IBM Plex Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:hidden;">
+
+  <!-- ===== NAV ===== -->
+  <nav style="position:sticky; top:0; z-index:50; background:rgba(244,239,228,0.82); backdrop-filter:blur(10px); border-bottom:1px solid rgba(33,29,24,0.1);">
+    <div style="max-width:1120px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px;">
+      <a href="#top" style="display:flex; align-items:center; gap:11px; text-decoration:none; color:#211d18;">
+        <span style="width:30px; height:30px; border-radius:7px; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'Newsreader',serif; font-weight:600; font-size:20px; line-height:1; padding-bottom:2px;">L</span>
+        <span style="font-family:'Newsreader',serif; font-size:21px; font-weight:600; letter-spacing:-0.01em;">Lectern</span>
+      </a>
+      <div class="lec-nav-links" style="display:flex; align-items:center; gap:30px;">
+        <a href="#how" style="text-decoration:none; color:#5b5347; font-size:14.5px; font-weight:500;">How it works</a>
+        <a href="#setup" style="text-decoration:none; color:#5b5347; font-size:14.5px; font-weight:500;">Setup</a>
+        <a href="#commands" style="text-decoration:none; color:#5b5347; font-size:14.5px; font-weight:500;">Commands</a>
+        <a href="#privacy" style="text-decoration:none; color:#5b5347; font-size:14.5px; font-weight:500;">Privacy</a>
+        <a class="lec-cta" href="#add" style="text-decoration:none; background:#5865f2; color:#fff; font-size:14px; font-weight:600; padding:9px 16px; border-radius:9px;">Add to Discord</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header id="top" style="position:relative;">
+    <div class="lec-hero" style="max-width:1120px; margin:0 auto; padding:84px 32px 92px; display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;">
+      <div style="animation:lec-rise 0.7s ease both;">
+        <div style="display:inline-flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:26px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:#8b2f33;"></span>
+          Discord bot · for book clubs
+        </div>
+        <h1 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(42px,5.4vw,68px); line-height:1.02; letter-spacing:-0.02em; margin:0 0 24px;">
+          Your book club, <span style="font-style:italic; color:#8b2f33;">organised by itself.</span>
+        </h1>
+        <p style="font-size:18.5px; line-height:1.6; color:#5b5347; max-width:30em; margin:0 0 36px;">
+          Lectern runs the whole cycle for you — proposing books, voting, gathering readers, finding a date and sending reminders — so no single person has to keep the meetings happening by hand.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:14px;">
+          <a id="add" href="#" style="display:inline-flex; align-items:center; gap:10px; background:#5865f2; color:#fff; text-decoration:none; font-size:15.5px; font-weight:600; padding:14px 24px; border-radius:11px; box-shadow:0 6px 20px rgba(88,101,242,0.28);">
+            <span style="width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,0.9);"></span>
+            Add Lectern to Discord
+          </a>
+          <a href="#commands" style="display:inline-flex; align-items:center; gap:8px; background:transparent; color:#211d18; text-decoration:none; font-size:15.5px; font-weight:600; padding:14px 22px; border-radius:11px; border:1px solid rgba(33,29,24,0.18);">
+            Browse the commands →
+          </a>
+        </div>
+        <p style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8a8275; margin:24px 0 0;">Free to use · One bot, many clubs · EU-hosted, privacy-first</p>
+      </div>
+
+      <!-- faux chat card: the real "propose books" announcement -->
+      <div style="animation:lec-rise 0.8s ease 0.1s both;">
+        <div style="background:#1e1f24; border-radius:18px; padding:18px 20px 20px; box-shadow:0 26px 60px -22px rgba(33,29,24,0.5); border:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <span style="width:40px; height:40px; border-radius:50%; background:#8b2f33; display:flex; align-items:center; justify-content:center; font-family:'Newsreader',serif; color:#f7f3ea; font-size:22px; font-weight:600; padding-bottom:2px;">L</span>
+            <div style="display:flex; align-items:baseline; gap:8px;">
+              <span style="color:#f3eee3; font-weight:600; font-size:15px;">Lectern</span>
+              <span style="background:#5865f2; color:#fff; font-size:9.5px; font-weight:600; letter-spacing:0.05em; padding:2px 5px; border-radius:4px; position:relative; top:-1px;">APP</span>
+              <span style="color:#8a8a92; font-size:11.5px;">Today at 16:07</span>
+            </div>
+          </div>
+          <div style="color:#dbdee1; font-size:14.5px; line-height:1.5;">
+            <div style="margin-bottom:11px;">📚 <strong style="color:#f3eee3;">Cycle #12</strong> — propose books <span style="color:#9aa0ac;">(up to 3 per person, 5 so far)</span>:</div>
+            <div style="display:flex; flex-direction:column; gap:7px;">
+              <div>•&nbsp; »Fahrenheit 451« <span style="color:#8a8f98;">— by Chris</span></div>
+              <div>•&nbsp; »1984« <span style="color:#8a8f98;">— by Chris</span></div>
+              <div>•&nbsp; »The Lord of The Rings« <span style="color:#8a8f98;">— by Elisa</span></div>
+              <div>•&nbsp; »Immune« <span style="color:#8a8f98;">— by Nicole</span></div>
+              <div>•&nbsp; »The Handmaid’s Tale« <span style="color:#8a8f98;">— by Felix</span></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <span style="display:inline-flex; align-items:center; gap:8px; background:#5865f2; color:#fff; font-size:13.5px; font-weight:600; padding:10px 16px; border-radius:8px;">📚 Propose a book</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== VALUE STRIP ===== -->
+  <section style="border-top:1px solid rgba(33,29,24,0.1); border-bottom:1px solid rgba(33,29,24,0.1); background:#efe8da;">
+    <div class="lec-3" style="max-width:1120px; margin:0 auto; padding:30px 32px; display:grid; grid-template-columns:repeat(3,1fr); gap:36px;">
+      <div style="display:flex; gap:14px; align-items:flex-start;">
+        <span style="font-family:'Newsreader',serif; font-size:34px; line-height:1; color:#8b2f33;">01</span>
+        <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.5;"><strong style="color:#211d18;">No more nagging.</strong> The cycle moves itself along on a schedule — nobody has to chase the group.</p>
+      </div>
+      <div style="display:flex; gap:14px; align-items:flex-start;">
+        <span style="font-family:'Newsreader',serif; font-size:34px; line-height:1; color:#8b2f33;">02</span>
+        <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.5;"><strong style="color:#211d18;">Everyone decides.</strong> Books are proposed and voted on democratically, right inside Discord.</p>
+      </div>
+      <div style="display:flex; gap:14px; align-items:flex-start;">
+        <span style="font-family:'Newsreader',serif; font-size:34px; line-height:1; color:#8b2f33;">03</span>
+        <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.5;"><strong style="color:#211d18;">It just remembers.</strong> Dates, readers and reminders are tracked for you, restart-safe and reliable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS / CYCLE ===== -->
+  <section id="how" style="background:#211d18; color:#f3eee3;">
+    <div style="max-width:1120px; margin:0 auto; padding:92px 32px 96px;">
+      <div style="max-width:46em; margin-bottom:58px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#c8836f; margin-bottom:18px;">The cycle</div>
+        <h2 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(32px,4vw,46px); line-height:1.08; letter-spacing:-0.02em; margin:0 0 18px;">One round, start to finish — every time.</h2>
+        <p style="font-size:17px; color:#b9b2a4; margin:0; line-height:1.6;">Each book your club reads runs through the same five phases. Lectern drives them automatically, and an admin can jump in or skip ahead whenever the plan changes.</p>
+      </div>
+
+      <div class="lec-cycle" style="display:grid; grid-template-columns:repeat(5,1fr); gap:22px; position:relative;">
+        <div>
+          <div style="width:36px; height:36px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500;">1</div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:20px; margin:20px 0 8px;">Propose</h3>
+          <p style="font-size:13.5px; color:#a8a193; line-height:1.5; margin:0 0 12px;">Members suggest the books they'd like the club to read next.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8836f; background:rgba(200,131,111,0.1); padding:3px 8px; border-radius:5px;">/propose</span>
+        </div>
+        <div>
+          <div style="width:36px; height:36px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500;">2</div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:20px; margin:20px 0 8px;">Vote</h3>
+          <p style="font-size:13.5px; color:#a8a193; line-height:1.5; margin:0 0 12px;">The group votes; ties resolve by runoff, random pick or an admin's call.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8836f; background:rgba(200,131,111,0.1); padding:3px 8px; border-radius:5px;">Vote button</span>
+        </div>
+        <div>
+          <div style="width:36px; height:36px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500;">3</div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:20px; margin:20px 0 8px;">Gather readers</h3>
+          <p style="font-size:13.5px; color:#a8a193; line-height:1.5; margin:0 0 12px;">Everyone who's in for the chosen book signs up to read along.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8836f; background:rgba(200,131,111,0.1); padding:3px 8px; border-radius:5px;">Sign-up button</span>
+        </div>
+        <div>
+          <div style="width:36px; height:36px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:500;">4</div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:20px; margin:20px 0 8px;">Schedule</h3>
+          <p style="font-size:13.5px; color:#a8a193; line-height:1.5; margin:0 0 12px;">Readers pick the dates that work; a clash-free meeting slot is locked in.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8836f; background:rgba(200,131,111,0.1); padding:3px 8px; border-radius:5px;">Date poll</span>
+        </div>
+        <div>
+          <div style="width:36px; height:36px; border-radius:50%; background:#c8836f; color:#211d18; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;">5</div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:20px; margin:20px 0 8px;">Remind &amp; meet</h3>
+          <p style="font-size:13.5px; color:#a8a193; line-height:1.5; margin:0 0 12px;">Lectern reminds everyone before the meeting — then the round is done.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8836f; background:rgba(200,131,111,0.1); padding:3px 8px; border-radius:5px;">Auto reminder</span>
+        </div>
+      </div>
+
+      <div style="margin-top:54px; padding-top:30px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-wrap:wrap; gap:14px 40px; align-items:center;">
+        <p style="margin:0; font-size:14.5px; color:#b9b2a4; max-width:38em; line-height:1.5;"><strong style="color:#f3eee3;">Already picked the book?</strong> Start a cycle straight in scheduling and skip the vote — or run the next book's proposals in parallel while the current one is still being read.</p>
+        <div style="display:flex; gap:10px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#e7e3d8; background:rgba(255,255,255,0.07); padding:6px 11px; border-radius:6px;">/newcycle</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#e7e3d8; background:rgba(255,255,255,0.07); padding:6px 11px; border-radius:6px;">/setbook</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SETUP / TUTORIAL ===== -->
+  <section id="setup" style="background:#f4efe4;">
+    <div style="max-width:1120px; margin:0 auto; padding:92px 32px 84px;">
+      <div style="max-width:46em; margin-bottom:52px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:18px;">Getting started</div>
+        <h2 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(32px,4vw,46px); line-height:1.08; letter-spacing:-0.02em; margin:0 0 14px;">Set up your club in a few minutes.</h2>
+        <p style="margin:0; font-size:16px; color:#5b5347; line-height:1.6;">Four short steps and you're reading. Everything is configured per server with slash commands — no dashboards, no accounts. Admin steps need the <em>Manage&nbsp;Server</em> permission.</p>
+      </div>
+
+      <div class="lec-steps" style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px;">
+        <!-- step 1 -->
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <span style="width:30px; height:30px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;">1</span>
+            <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0;">Add Lectern &amp; run setup</h3>
+          </div>
+          <p style="margin:0 0 12px; font-size:14.5px; color:#5b5347; line-height:1.55;">Invite the bot to your server, then run <span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/setup</span> to pick the announcement channel and language. That activates your club — everything else has sensible defaults you can tune later.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8b2f33; background:rgba(139,47,51,0.09); padding:4px 9px; border-radius:6px;">/setup</span>
+        </div>
+        <!-- step 2 -->
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <span style="width:30px; height:30px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;">2</span>
+            <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0;">Set the meeting rhythm</h3>
+          </div>
+          <p style="margin:0 0 12px; font-size:14.5px; color:#5b5347; line-height:1.55;"><span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/schedule</span> sets how often you meet (e.g. the 2nd Saturday each month) and the minimum reading time in days. Lectern uses this to plan every cycle backwards from the meeting.</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8b2f33; background:rgba(139,47,51,0.09); padding:4px 9px; border-radius:6px;">/schedule</span>
+        </div>
+        <!-- step 3 -->
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <span style="width:30px; height:30px; border-radius:50%; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;">3</span>
+            <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0;">Tune the club (optional)</h3>
+          </div>
+          <p style="margin:0 0 12px; font-size:14.5px; color:#5b5347; line-height:1.55;">Run <span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/config</span> with no options for an interactive panel — proposals &amp; votes per person, quorums, phase windows, tie-breaks, the scheduling mode, and the <strong>autopilot</strong> (let cycles start themselves on the schedule).</p>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8b2f33; background:rgba(139,47,51,0.09); padding:4px 9px; border-radius:6px;">/config</span>
+        </div>
+        <!-- step 4 -->
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <span style="width:30px; height:30px; border-radius:50%; background:#c8836f; color:#211d18; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;">4</span>
+            <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0;">Start reading</h3>
+          </div>
+          <p style="margin:0 0 12px; font-size:14.5px; color:#5b5347; line-height:1.55;">Open proposals with <span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/startcycle</span> — or, if the book is already decided, jump straight ahead with <span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/newcycle</span>. With the autopilot on, you don't even need this: Lectern begins each round on its own.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8b2f33; background:rgba(139,47,51,0.09); padding:4px 9px; border-radius:6px;">/startcycle</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8b2f33; background:rgba(139,47,51,0.09); padding:4px 9px; border-radius:6px;">/newcycle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- key settings reference -->
+      <div style="margin-top:34px; background:#efe8da; border:1px solid rgba(33,29,24,0.1); border-radius:14px; padding:26px 28px;">
+        <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:19px; margin:0 0 16px;">The settings worth knowing</h3>
+        <div class="lec-2" style="display:grid; grid-template-columns:1fr 1fr; gap:14px 40px;">
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Proposals / votes per person</span> — how many books each member may propose and how many votes they get.</div>
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Min. readers / attendees</span> — the quorum a round needs to proceed to scheduling and to lock a date.</div>
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Phase windows &amp; reading days</span> — how long proposing, voting, sign-up and scheduling stay open, and the minimum reading time.</div>
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Tie-breaks</span> — settle a level vote by runoff, random pick, or an admin's choice.</div>
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Scheduling mode</span> — take the next fixed slot, or poll readers for the dates that suit them.</div>
+          <div style="font-size:14px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#211d18;">Autopilot</span> — start cycles automatically on the schedule, with skip or compress when a start runs late.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features" style="background:#efe8da; border-top:1px solid rgba(33,29,24,0.1);">
+    <div style="max-width:1120px; margin:0 auto; padding:92px 32px 84px;">
+      <div style="max-width:44em; margin-bottom:52px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:18px;">Built for real clubs</div>
+        <h2 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(32px,4vw,46px); line-height:1.08; letter-spacing:-0.02em; margin:0;">Everything a club needs, nothing it doesn't.</h2>
+      </div>
+
+      <div class="lec-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="width:16px; height:16px; border:2px solid #8b2f33; border-radius:4px;"></span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">One bot, many clubs</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">Every Discord server is its own club with its own settings, books and schedule — fully separated, no setup overhead.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="width:14px; height:18px; border:2px solid #8b2f33; border-radius:7px 7px 4px 4px;"></span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">Privacy-first by design</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">Lectern never reads your messages — only the buttons and commands you choose to use. Data stays in the EU.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="width:18px; height:12px; border:2px solid #8b2f33; border-radius:3px;"></span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">Native Discord feel</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">Slash commands for admins, buttons and modals for members, private replies for personal feedback. No clutter in the channel.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="width:16px; height:16px; border:2px solid #8b2f33; border-radius:50%; border-right-color:transparent;"></span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">Tie-breaks your way</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">When a vote ends level, settle it with a runoff, a random pick, or let an admin decide — configurable per club.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="width:18px; height:18px; border-top:2px solid #8b2f33; border-right:2px solid #8b2f33; transform:rotate(45deg);"></span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">Start anywhere, run in parallel</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">Book already agreed? Jump straight to scheduling. Line up the next read while the current one is still being read.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:14px; padding:26px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:rgba(139,47,51,0.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#8b2f33;">文A</span></div>
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:21px; margin:0 0 9px;">Speaks your language</h3>
+          <p style="margin:0; font-size:14.5px; color:#5b5347; line-height:1.55;">English and German out of the box, set per club — with more languages on the way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMMANDS ===== -->
+  <section id="commands" style="background:#efe8da; border-top:1px solid rgba(33,29,24,0.1);">
+    <div style="max-width:1120px; margin:0 auto; padding:92px 32px 96px;">
+      <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-end; justify-content:space-between; margin-bottom:36px;">
+        <div style="max-width:38em;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:18px;">Reference</div>
+          <h2 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(32px,4vw,46px); line-height:1.08; letter-spacing:-0.02em; margin:0 0 14px;">Commands &amp; actions</h2>
+          <p style="margin:0; font-size:16px; color:#5b5347; line-height:1.55;">Admins drive the club with slash commands; members take part with buttons and short modals. Filter or search below.</p>
+        </div>
+      </div>
+
+      <!-- controls -->
+      <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; margin-bottom:24px;">
+        <div id="cmd-cats" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        <input id="cmd-search" type="text" placeholder="Search commands…" style="font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:#211d18; background:#fffdf8; border:1px solid rgba(33,29,24,0.16); border-radius:9px; padding:10px 14px; min-width:220px; outline:none;" />
+      </div>
+
+      <!-- list -->
+      <div id="cmd-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+      <p style="margin:22px 0 0; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#8a8275;"><span id="cmd-count">0</span> shown · admin commands need the “Manage Server” permission</p>
+    </div>
+  </section>
+
+  <!-- ===== PRIVACY ===== -->
+  <section id="privacy" style="background:#f4efe4;">
+    <div class="lec-privacy" style="max-width:1120px; margin:0 auto; padding:92px 32px 96px; display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px; align-items:start;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#8b2f33; margin-bottom:18px;">Privacy &amp; data</div>
+        <h2 style="font-family:'Newsreader',serif; font-weight:500; font-size:clamp(30px,3.6vw,42px); line-height:1.08; letter-spacing:-0.02em; margin:0 0 18px;">Your club's data, treated with care.</h2>
+        <p style="margin:0; font-size:16px; color:#5b5347; line-height:1.6;">Lectern is built for European data protection from the ground up — minimal data, no message snooping, and tools for members to see or erase what's theirs.</p>
+      </div>
+      <div class="lec-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:13px; padding:22px;">
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:18px; margin:0 0 8px;">Data minimisation</h3>
+          <p style="margin:0; font-size:13.5px; color:#5b5347; line-height:1.5;">Only what's needed: a pseudonymous user ID, your display name, and the books, votes and RSVPs you submit. No emails, no message content.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:13px; padding:22px;">
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:18px; margin:0 0 8px;">Hosted in the EU</h3>
+          <p style="margin:0; font-size:13.5px; color:#5b5347; line-height:1.5;">Data is stored on EU infrastructure and backups are treated as personal data. Retention is documented and limited.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:13px; padding:22px;">
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:18px; margin:0 0 8px;">See &amp; erase, anytime</h3>
+          <p style="margin:0; font-size:13.5px; color:#5b5347; line-height:1.5;"><span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/my-data</span> shows what's stored; <span style="font-family:'IBM Plex Mono',monospace; color:#8b2f33;">/forget-me</span> anonymises your votes and deletes the rest.</p>
+        </div>
+        <div style="background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:13px; padding:22px;">
+          <h3 style="font-family:'Newsreader',serif; font-weight:600; font-size:18px; margin:0 0 8px;">Leave, and it's gone</h3>
+          <p style="margin:0; font-size:13.5px; color:#5b5347; line-height:1.5;">Remove Lectern from a server and the club's data is purged after a short, documented retention window.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section style="background:#211d18; color:#f3eee3;">
+    <div style="max-width:1120px; margin:0 auto; padding:84px 32px; text-align:center;">
+      <h2 style="font-family:'Newsreader',serif; font-weight:500; font-style:italic; font-size:clamp(32px,4.4vw,52px); line-height:1.06; letter-spacing:-0.02em; margin:0 0 22px;">Let the bot keep the pages turning.</h2>
+      <p style="font-size:17px; color:#b9b2a4; max-width:34em; margin:0 auto 34px; line-height:1.6;">Add Lectern to your server, run <span style="font-family:'IBM Plex Mono',monospace; color:#c8836f;">/setup</span>, and start your first cycle in under a minute.</p>
+      <a href="#" style="display:inline-flex; align-items:center; gap:10px; background:#5865f2; color:#fff; text-decoration:none; font-size:16px; font-weight:600; padding:15px 28px; border-radius:12px; box-shadow:0 8px 26px rgba(88,101,242,0.34);">
+        <span style="width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,0.9);"></span>
+        Add Lectern to Discord
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="background:#1a1713; color:#9a9285;">
+    <div style="max-width:1120px; margin:0 auto; padding:40px 32px; display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:11px;">
+        <span style="width:28px; height:28px; border-radius:6px; background:#8b2f33; color:#f7f3ea; display:flex; align-items:center; justify-content:center; font-family:'Newsreader',serif; font-weight:600; font-size:18px; padding-bottom:2px;">L</span>
+        <span style="font-family:'Newsreader',serif; font-size:18px; font-weight:600; color:#e7e3d8;">Lectern</span>
+      </div>
+      <div style="display:flex; gap:26px; font-size:13.5px;">
+        <a href="#how" style="color:#9a9285; text-decoration:none;">How it works</a>
+        <a href="#setup" style="color:#9a9285; text-decoration:none;">Setup</a>
+        <a href="#commands" style="color:#9a9285; text-decoration:none;">Commands</a>
+        <a href="#privacy" style="color:#9a9285; text-decoration:none;">Privacy</a>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6e675c;">A Discord bot for book clubs · EU-hosted</div>
+    </div>
+  </footer>
+
+<script>
+  // Command reference — kept in sync with the bot's actual slash commands and
+  // member button actions (see the /help embed in the source).
+  var COMMANDS = [
+    // --- Setup (admin) ---
+    { name: "/setup", args: "", kind: "modal", category: "admin",
+      desc: "Set up this server: pick the announcement channel and language. Activates the club." },
+    { name: "/config", args: "[options]", kind: "slash", category: "admin",
+      desc: "Club settings — proposals & votes per person, quorums, phase windows, reading days, tie-breaks, scheduling mode and the autopilot. Run without options for an interactive panel." },
+    { name: "/schedule", args: "", kind: "slash", category: "admin",
+      desc: "Set the meeting cadence (e.g. 2nd Saturday monthly) and the minimum reading time in days." },
+    // --- Cycle (admin) ---
+    { name: "/startcycle", args: "", kind: "slash", category: "admin",
+      desc: "Begin a new round by opening book proposals." },
+    { name: "/newcycle", args: "", kind: "modal", category: "admin",
+      desc: "Start a cycle with an already-decided book — skip proposing and voting." },
+    { name: "/advance", args: "[cycle]", kind: "slash", category: "admin",
+      desc: "Move a cycle on to its next phase manually, without waiting for the schedule." },
+    { name: "/cancel", args: "[cycle]", kind: "slash", category: "admin",
+      desc: "Cancel a running cycle." },
+    { name: "/status", args: "", kind: "slash", category: "admin",
+      desc: "Show the status of all active cycles." },
+    // --- Book (admin) ---
+    { name: "/setbook", args: "[cycle]", kind: "modal", category: "admin",
+      desc: "Set or replace the chosen book on an existing cycle." },
+    { name: "/pickwinner", args: "", kind: "slash", category: "admin",
+      desc: "Break a tie by choosing the winning book when a vote ends level." },
+    // --- Date (admin) ---
+    { name: "/meeting", args: "", kind: "modal", category: "admin",
+      desc: "Set the meeting date or open a date poll — a guided dialog." },
+    { name: "/setdate", args: "[cycle] [date]", kind: "slash", category: "admin",
+      desc: "Set a cycle's meeting date manually." },
+    { name: "/datepoll", args: "", kind: "modal", category: "admin",
+      desc: "Open a date poll with your own candidate dates." },
+    { name: "/pickdate", args: "", kind: "slash", category: "admin",
+      desc: "Pick the meeting date when a date poll ends in a tie." },
+    // --- Members ---
+    { name: "/propose", args: "", kind: "modal", category: "member",
+      desc: "Suggest a book during the proposing phase — a modal for the title, a short description and an optional link." },
+    { name: "/pot", args: "", kind: "slash", category: "member",
+      desc: "See which books are in the pot right now." },
+    { name: "/show-schedule", args: "", kind: "slash", category: "member",
+      desc: "Upcoming meeting dates and the projected roadmap." },
+    { name: "/help", args: "", kind: "slash", category: "member",
+      desc: "A role-aware overview of everything the bot can do." },
+    { name: "Vote", args: "", kind: "button", category: "member",
+      desc: "Pick your favourite among the proposed books, straight from the voting message." },
+    { name: "I'll read", args: "", kind: "button", category: "member",
+      desc: "Tap to join the readers for the chosen book during reader sign-up." },
+    { name: "Availability", args: "", kind: "button", category: "member",
+      desc: "Mark which proposed dates work for you on the scheduling poll." },
+    { name: "RSVP", args: "", kind: "button", category: "member",
+      desc: "Confirm whether you'll be at the meeting so the club knows who's coming." },
+    // --- Privacy ---
+    { name: "/privacy", args: "", kind: "slash", category: "privacy",
+      desc: "Read how the bot handles your data, with a link to the full policy." },
+    { name: "/my-data", args: "", kind: "slash", category: "privacy",
+      desc: "See exactly what the bot has stored about you in this club (JSON export)." },
+    { name: "/forget-me", args: "", kind: "slash", category: "privacy",
+      desc: "Anonymise your votes and delete the rest of your personal data." }
+  ];
+
+  var KIND_META = {
+    slash:  { label: "Slash command", color: "#8b2f33", bg: "rgba(139,47,51,0.09)" },
+    modal:  { label: "Slash + dialog", color: "#8b2f33", bg: "rgba(139,47,51,0.09)" },
+    button: { label: "Button",         color: "#2f5d8b", bg: "rgba(47,93,139,0.10)" }
+  };
+  var CATS = [
+    { key: "all", label: "All" },
+    { key: "admin", label: "Admin" },
+    { key: "member", label: "Members" },
+    { key: "privacy", label: "Privacy" }
+  ];
+
+  var state = { category: "all", query: "" };
+  var catBase = "font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:9px; cursor:pointer; border:1px solid rgba(33,29,24,0.16); transition:all .15s;";
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function renderCats() {
+    var wrap = document.getElementById("cmd-cats");
+    wrap.innerHTML = "";
+    CATS.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "cmd-cat";
+      b.textContent = c.label;
+      var active = state.category === c.key;
+      b.style.cssText = catBase + (active
+        ? " background:#211d18; color:#f4efe4; border-color:#211d18;"
+        : " background:transparent; color:#5b5347;");
+      b.addEventListener("click", function () { state.category = c.key; render(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function render() {
+    renderCats();
+    var q = state.query.trim().toLowerCase();
+    var list = document.getElementById("cmd-list");
+    var shown = COMMANDS.filter(function (c) {
+      var inCat = state.category === "all" || c.category === state.category;
+      var inQ = !q || (c.name + " " + c.desc + " " + c.args).toLowerCase().indexOf(q) !== -1;
+      return inCat && inQ;
+    });
+    list.innerHTML = "";
+    if (shown.length === 0) {
+      list.innerHTML = '<div style="text-align:center; padding:48px; color:#8a8275; font-size:15px;">No commands match that search.</div>';
+    } else {
+      shown.forEach(function (c) {
+        var meta = KIND_META[c.kind];
+        var argsHtml = c.args
+          ? ' <span style="font-family:\'IBM Plex Mono\',monospace; font-size:12.5px; color:#a39a8a;">' + esc(c.args) + "</span>"
+          : "";
+        var row = document.createElement("div");
+        row.className = "lec-cmd-row";
+        row.style.cssText = "background:#fffdf8; border:1px solid rgba(33,29,24,0.09); border-radius:12px; padding:18px 20px; display:grid; grid-template-columns:minmax(190px,260px) 1fr auto; gap:20px; align-items:center;";
+        row.innerHTML =
+          '<div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">' +
+            '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:15px; font-weight:500; color:#211d18;">' + esc(c.name) + "</span>" + argsHtml +
+          "</div>" +
+          '<p style="margin:0; font-size:14px; color:#5b5347; line-height:1.5;">' + esc(c.desc) + "</p>" +
+          '<span style="font-family:\'IBM Plex Mono\',monospace; font-size:11px; letter-spacing:0.04em; font-weight:500; padding:5px 10px; border-radius:20px; white-space:nowrap; color:' + meta.color + "; background:" + meta.bg + ';">' + meta.label + "</span>";
+        list.appendChild(row);
+      });
+    }
+    document.getElementById("cmd-count").textContent = shown.length;
+  }
+
+  document.getElementById("cmd-search").addEventListener("input", function (e) {
+    state.query = e.target.value;
+    render();
+  });
+  render();
+</script>
+</body>
+</html>
